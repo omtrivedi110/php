@@ -74,8 +74,38 @@ class Conect{
 
     public function get_media(){
         $query = "SELECT * FROM $this->media_table";
+
         
         return mysqli_query($this->res,$query);
+    }
+
+    private function fetch_single_media($id){
+
+        $query = "SELECT * FROM $this->media_table WHERE id = $id";
+        return mysqli_query($this->res,$query);
+    }
+
+    public function delete_media($id){
+
+        $record = $this->fetch_single_media($id);
+
+        if(mysqli_num_rows($record)==1){
+
+            $data = mysqli_fetch_assoc($record);
+            $file_name = $data['path'];
+
+            $query = "DELETE FROM $this->media_table WHERE id =$id";
+
+            if(mysqli_query($this->conn,$query) && unlink($file_name)){
+
+                return "Deleted successfully..";
+            }else{
+                return "Failed to delete..";
+            }
+        }
+        else{
+            return "Media not exits...";
+        }
     }
 }
 ?>
